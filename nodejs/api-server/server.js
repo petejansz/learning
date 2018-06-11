@@ -36,7 +36,7 @@ var router = express.Router()
 router.use( function ( req, res, next )
 {
     // do logging
-    console.log( JSON.stringify(req.body) )
+    console.log( JSON.stringify( req.body ) )
     next()
 } )
 
@@ -46,23 +46,45 @@ router.get( '/', function ( req, res )
     res.json( { message: 'Welcome to our api!' } )
 } )
 
-router.route( '/v1/second-chance/players/self/profile' )
-    // create a profile (accessed at POST http://localhost:port/v1/second-chance/players/self/profile)
-    .get( function ( req, res )
-    {
-        var playerId = req.get( 'x-player-id' ) || '1234'
-        var jackpotCaptain = playerId % 2
-        var name = req.param( 'name', 'No Name' )
-        var pro = new Profile( playerId, jackpotCaptain, name )
-        res.json( { jackpot_captain: pro.jackpotCaptain } )
-    } )
-    .put( function ( req, res )
-    {
-        var playerId = req.get( 'x-player-id' ) || '1234'
-        var jackpotCaptain = req.param( 'jackpot_captain' )
-        var pro = new Profile( playerId, jackpotCaptain, 'Jack Sparrow' )
-        res.json( { jackpot_captain: pro.jackpotCaptain } )
-    } )
+router.get( '/v1/california-admin-rest/players/:playerId/services', function ( req, res )
+{
+    var playerId = req.param( 'playerId' )
+    res.json( { playerId: playerId, services: [ {name: "pp", id:123, state: "SUSPENDED"}, {name: "sc", id:246, state: "ACTIVE"} ] } )
+} )
+
+router.put( '/v1/california-admin-rest/players/:playerId/services/:state', function ( req, res )
+{
+    var playerId = req.param( 'playerId' )
+    var state = req.param( 'state' )
+    var serviceId = req.param( 'serviceId' )
+    var reason = req.param( 'reason' )
+    res.json( { playerId: playerId, state: state, serviceId: serviceId, reason: reason } )
+} )
+
+router.get( '/v1/second-chance/players/self/profile', function ( req, res )
+{
+    var playerId = req.get( 'x-player-id' ) || '1234'
+    var jackpotCaptain = playerId % 2
+    var name = req.param( 'name', 'No Name' )
+    var pro = new Profile( playerId, jackpotCaptain, name )
+    res.json( { jackpot_captain: pro.jackpotCaptain } )
+} )
+
+router.get( '/v1/second-chance/players/self/profile', function ( req, res )
+{
+    var playerId = req.get( 'x-player-id' ) || '1234'
+    var jackpotCaptain = playerId % 2
+    var name = req.param( 'name', 'No Name' )
+    var pro = new Profile( playerId, jackpotCaptain, name )
+    res.json( { jackpot_captain: pro.jackpotCaptain } )
+} )
+router.put( '/v1/second-chance/players/self/profile', function ( req, res )
+{
+    var playerId = req.get( 'x-player-id' ) || '1234'
+    var jackpotCaptain = req.param( 'jackpot_captain' )
+    var pro = new Profile( playerId, jackpotCaptain, 'Jack Sparrow' )
+    res.json( { jackpot_captain: pro.jackpotCaptain } )
+} )
 
 // REGISTER OUR ROUTES
 app.use( '/api', router )
