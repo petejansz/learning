@@ -46,22 +46,29 @@ router.get( '/', function ( req, res )
     res.json( { message: 'Welcome to our api!' } )
 } )
 
-router.get( '/v1/california-admin-rest/players/:playerId/services', function ( req, res )
+router.get( '/california-admin-rest/api/v1/admin/players/:playerId/services', function ( req, res )
 {
     var playerId = req.param( 'playerId' )
     res.json( { playerId: playerId, services: [ {name: "pp", id:123, state: "SUSPENDED"}, {name: "sc", id:246, state: "ACTIVE"} ] } )
 } )
 
-router.put( '/v1/california-admin-rest/players/:playerId/services/:state', function ( req, res )
+router.put( '/california-admin-rest/api/v1/admin/players/:playerId/services/activate', function ( req, res )
 {
     var playerId = req.param( 'playerId' )
-    var state = req.param( 'state' )
     var serviceId = req.param( 'serviceId' )
     var reason = req.param( 'reason' )
-    res.json( { playerId: playerId, state: state, serviceId: serviceId, reason: reason } )
+    res.json( { playerId: playerId, newServicesState: 'activate', serviceId: serviceId, reason: reason } )
 } )
 
-router.get( '/v1/second-chance/players/self/profile', function ( req, res )
+router.put( '/california-admin-rest/api/v1/admin/players/:playerId/services/suspend', function ( req, res )
+{
+    var playerId = req.param( 'playerId' )
+    var serviceId = req.param( 'serviceId' )
+    var reason = req.param( 'reason' )
+    res.json( { playerId: playerId, newServicesState: 'suspend', serviceId: serviceId, reason: reason } )
+} )
+
+router.get( '/api/v1/second-chance/players/self/profile', function ( req, res )
 {
     var playerId = req.get( 'x-player-id' ) || '1234'
     var jackpotCaptain = playerId % 2
@@ -69,16 +76,7 @@ router.get( '/v1/second-chance/players/self/profile', function ( req, res )
     var pro = new Profile( playerId, jackpotCaptain, name )
     res.json( { jackpot_captain: pro.jackpotCaptain } )
 } )
-
-router.get( '/v1/second-chance/players/self/profile', function ( req, res )
-{
-    var playerId = req.get( 'x-player-id' ) || '1234'
-    var jackpotCaptain = playerId % 2
-    var name = req.param( 'name', 'No Name' )
-    var pro = new Profile( playerId, jackpotCaptain, name )
-    res.json( { jackpot_captain: pro.jackpotCaptain } )
-} )
-router.put( '/v1/second-chance/players/self/profile', function ( req, res )
+router.put( '/api/v1/second-chance/players/self/profile', function ( req, res )
 {
     var playerId = req.get( 'x-player-id' ) || '1234'
     var jackpotCaptain = req.param( 'jackpot_captain' )
@@ -87,7 +85,7 @@ router.put( '/v1/second-chance/players/self/profile', function ( req, res )
 } )
 
 // REGISTER OUR ROUTES
-app.use( '/api', router )
+app.use( '/', router )
 
 // START THE SERVER
 app.listen( port )
